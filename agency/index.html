@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Portal — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root { --navy:#0F2340; --gold:#C8973A; --gold-light:#E8B85A; --green:#1E7A4E; --red:#C0392B; --border:#E2E8F0; --muted:#64748B; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'DM Sans',sans-serif; min-height:100vh; background:var(--navy); display:flex; align-items:center; justify-content:center; }
+
+.login-wrap { width:100%; max-width:420px; padding:20px; }
+.login-card { background:white; border-radius:20px; overflow:hidden; box-shadow:0 32px 80px rgba(0,0,0,0.4); }
+.login-top { background:var(--navy); padding:36px 32px 28px; text-align:center; }
+.brand-logo { width:60px; height:60px; background:var(--gold); border-radius:16px; display:inline-flex; align-items:center; justify-content:center; font-size:26px; font-weight:700; color:var(--navy); margin-bottom:14px; }
+.brand-name { font-size:17px; font-weight:600; color:white; }
+.brand-tagline { font-size:11px; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:1.2px; margin-top:3px; }
+
+.login-body { padding:32px; }
+.login-body h2 { font-size:18px; font-weight:600; color:var(--navy); margin-bottom:4px; }
+.login-body p { font-size:13px; color:var(--muted); margin-bottom:24px; }
+.field { margin-bottom:16px; }
+.field label { display:block; font-size:12px; font-weight:600; color:#374151; margin-bottom:6px; }
+.field input {
+  width:100%; border:1.5px solid var(--border); border-radius:10px;
+  padding:11px 14px; font-size:14px; font-family:inherit; color:#1A2332; transition:border 0.15s;
+}
+.field input:focus { outline:none; border-color:var(--navy); }
+.login-btn {
+  width:100%; background:var(--navy); color:white; border:none; border-radius:10px;
+  padding:13px; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; margin-top:4px; transition:background 0.15s;
+}
+.login-btn:hover { background:#1A3A5C; }
+.login-err { color:var(--red); font-size:12px; margin-top:10px; text-align:center; display:none; }
+.demo-hint { margin-top:20px; padding:12px; background:#F8FAFC; border-radius:8px; font-size:12px; color:var(--muted); text-align:center; border:1px solid var(--border); }
+.demo-hint strong { color:var(--navy); }
+
+/* ── DASHBOARD ── */
+#dashWrap { display:none; min-height:100vh; background:#F4F6F9; flex-direction:column; }
+.dash-top { background:var(--navy); color:white; padding:14px 24px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.dash-brand { display:flex; align-items:center; gap:10px; }
+.dash-mark { width:34px; height:34px; background:var(--gold); border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:var(--navy); }
+.dash-title { font-size:15px; font-weight:600; }
+.dash-sub { font-size:11px; color:rgba(255,255,255,0.5); margin-top:1px; }
+.dash-actions { margin-left:auto; display:flex; gap:8px; align-items:center; }
+.agent-pill { background:rgba(255,255,255,0.1); border-radius:20px; padding:5px 12px; font-size:12px; color:rgba(255,255,255,0.8); }
+.signout-btn { background:rgba(255,255,255,0.15); border:none; color:white; border-radius:8px; padding:6px 12px; font-size:12px; cursor:pointer; font-family:inherit; }
+.signout-btn:hover { background:rgba(255,255,255,0.25); }
+
+.dash-body { flex:1; display:flex; gap:0; }
+.dash-sidebar { width:220px; background:white; border-right:1px solid var(--border); padding:16px 12px; flex-shrink:0; }
+.ds-section { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--muted); padding:0 8px; margin:16px 0 6px; }
+.ds-item { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:13px; color:#374151; margin-bottom:2px; transition:all 0.1s; }
+.ds-item:hover { background:#F4F6F9; }
+.ds-item.active { background:#EEF2FF; color:var(--navy); font-weight:600; }
+
+.dash-main { flex:1; padding:24px; overflow-y:auto; }
+.dash-page { display:none; }
+.dash-page.active { display:block; }
+
+.stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
+.stat-card { background:white; border:1px solid var(--border); border-radius:12px; padding:18px; }
+.stat-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); margin-bottom:8px; }
+.stat-val { font-size:26px; font-weight:700; color:var(--navy); }
+.stat-sub { font-size:12px; color:var(--muted); margin-top:4px; }
+
+.card2 { background:white; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:16px; }
+.card2-hdr { padding:14px 18px; border-bottom:1px solid var(--border); font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:space-between; }
+.card2-body { padding:18px; }
+
+.launch-btn { background:var(--gold); color:var(--navy); border:none; border-radius:10px; padding:14px 28px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; transition:background 0.15s; display:flex; align-items:center; gap:8px; }
+.launch-btn:hover { background:var(--gold-light); }
+
+table { width:100%; border-collapse:collapse; }
+th { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); padding:10px 18px; text-align:left; border-bottom:1px solid var(--border); background:#FAFBFC; }
+td { padding:12px 18px; font-size:13px; border-bottom:1px solid #F4F6F8; }
+tr:last-child td { border-bottom:none; }
+
+.badge { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; }
+.badge-green { background:#E9F7EF; color:var(--green); }
+.badge-gold { background:#FDF3E0; color:#8B6520; }
+.badge-red { background:#FDEDEC; color:var(--red); }
+.badge-gray { background:#F1F5F9; color:#475569; }
+.badge-blue { background:#EFF6FF; color:#1D4ED8; }
+
+/* Seat management */
+.seat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; }
+.seat-card { border:1.5px solid var(--border); border-radius:10px; padding:12px 14px; }
+.seat-card.active-seat { border-color:#1E7A4E; background:#F0FDF4; }
+.seat-name { font-size:13px; font-weight:600; color:var(--navy); }
+.seat-email { font-size:11px; color:var(--muted); margin-top:2px; }
+.seat-status { font-size:10px; font-weight:700; margin-top:8px; }
+
+.field2 { margin-bottom:12px; }
+.field2 label { display:block; font-size:12px; font-weight:600; color:#374151; margin-bottom:5px; }
+.field2 input, .field2 select { width:100%; border:1.5px solid var(--border); border-radius:8px; padding:9px 12px; font-size:13px; font-family:inherit; color:#1A2332; }
+.field2 input:focus, .field2 select:focus { outline:none; border-color:var(--navy); }
+.btn2 { border-radius:8px; padding:9px 18px; font-size:13px; font-weight:600; cursor:pointer; border:none; font-family:inherit; }
+.btn2-primary { background:var(--navy); color:white; }
+.btn2-outline { background:white; color:var(--navy); border:1.5px solid var(--border); }
+
+.outcome-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid #F4F6F8; }
+.outcome-row:last-child { border-bottom:none; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <div class="login-top">
+      <div class="brand-logo" id="brandLogo">E</div>
+      <div class="brand-name" id="brandName">Evertrust Legacy Protection Group</div>
+      <div class="brand-tagline" id="brandTagline">Agent Dialer Platform</div>
+    </div>
+    <div class="login-body">
+      <h2>Welcome back</h2>
+      <p>Sign in to access your dialer and leads</p>
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="agentEmail" placeholder="you@agency.com" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="agentPass" placeholder="••••••••" />
+      </div>
+      <button class="login-btn" onclick="agentLogin()">Sign In to Dialer</button>
+      <div class="login-err" id="agentErr">Invalid credentials. Check the demo accounts below.</div>
+      <div class="demo-hint">Need access? Contact <strong>Evertrust Legacy Protection Group</strong> for your login credentials.</div>
+
+
+
+
+
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashWrap">
+  <div class="dash-top">
+    <div class="dash-brand">
+      <div class="dash-mark" id="dashMark">E</div>
+      <div>
+        <div class="dash-title" id="dashBrandName">Evertrust</div>
+        <div class="dash-sub" id="dashBrandSub">Agent Portal</div>
+      </div>
+    </div>
+    <div class="dash-actions">
+      <span class="agent-pill" id="agentPill">Agent</span>
+      <button class="signout-btn" onclick="agentLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="dash-body">
+    <div class="dash-sidebar">
+      <div class="ds-section">Menu</div>
+      <div class="ds-item active" onclick="showDashPage('home',this)">⊞ Dashboard</div>
+      <div class="ds-item" onclick="launchDialer()">📞 Launch Dialer</div>
+      <div class="ds-section" id="adminSection" style="display:none;">Admin</div>
+      <div class="ds-item" id="teamNav" onclick="showDashPage('team',this)" style="display:none;">👥 Team & Seats</div>
+      <div class="ds-item" id="analyticsNav" onclick="showDashPage('analytics',this)" style="display:none;">📊 Analytics</div>
+      <div class="ds-item" id="settingsNav" onclick="showDashPage('settings',this)" style="display:none;">⚙️ Settings</div>
+    </div>
+
+    <div class="dash-main">
+
+      <!-- HOME -->
+      <div class="dash-page active" id="dp-home">
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-label">Today's Calls</div>
+            <div class="stat-val" id="stat-calls">0</div>
+            <div class="stat-sub">logged this session</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Callbacks Due</div>
+            <div class="stat-val" id="stat-callbacks">3</div>
+            <div class="stat-sub">scheduled today</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Leads Loaded</div>
+            <div class="stat-val" id="stat-leads">0</div>
+            <div class="stat-sub">in your dialer queue</div>
+          </div>
+        </div>
+
+        <div class="card2">
+          <div class="card2-hdr">Launch Your Dialer</div>
+          <div class="card2-body" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+            <div>
+              <p style="font-size:14px;color:#374151;margin-bottom:8px;">Your dialer is ready. Import a lead list and start calling.</p>
+              <p style="font-size:12px;color:var(--muted);">Full script guide · objection handling · call tracking · lead import</p>
+            </div>
+            <button class="launch-btn" onclick="launchDialer()">📞 Open Dialer →</button>
+          </div>
+        </div>
+
+        <div class="card2">
+          <div class="card2-hdr">Recent Call Log</div>
+          <table>
+            <thead><tr><th>Name</th><th>Phone</th><th>Outcome</th><th>Time</th></tr></thead>
+            <tbody id="callLogTable">
+              <tr><td colspan="4" style="text-align:center;padding:24px;color:var(--muted);">No calls logged yet — launch the dialer to get started</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TEAM -->
+      <div class="dash-page" id="dp-team">
+        <div class="card2">
+          <div class="card2-hdr">
+            <span>Team Seats</span>
+            <button class="btn2 btn2-primary" onclick="showAddAgent()">+ Add Agent</button>
+          </div>
+          <div class="card2-body">
+            <div style="margin-bottom:16px;padding:12px 14px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border);font-size:13px;display:flex;gap:20px;">
+              <div><span style="color:var(--muted);">Seats used:</span> <strong id="seatsUsed">—</strong></div>
+              <div><span style="color:var(--muted);">Seats available:</span> <strong id="seatsAvail">—</strong></div>
+              <div><span style="color:var(--muted);">Plan:</span> <strong id="teamPlan">—</strong></div>
+            </div>
+            <div class="seat-grid" id="seatGrid"></div>
+          </div>
+        </div>
+
+        <div class="card2" id="addAgentCard" style="display:none;">
+          <div class="card2-hdr">Add New Agent</div>
+          <div class="card2-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="field2"><label>First Name</label><input type="text" id="newAgentFirst" placeholder="Jane" /></div>
+              <div class="field2"><label>Last Name</label><input type="text" id="newAgentLast" placeholder="Smith" /></div>
+              <div class="field2"><label>Email</label><input type="email" id="newAgentEmail" placeholder="jane@agency.com" /></div>
+              <div class="field2"><label>Role</label><select id="newAgentRole"><option value="agent">Agent</option><option value="admin">Admin</option></select></div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <button class="btn2 btn2-primary" onclick="addAgent()">Add Agent</button>
+              <button class="btn2 btn2-outline" onclick="document.getElementById('addAgentCard').style.display='none'">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="dash-page" id="dp-analytics">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;" id="analyticsStats"></div>
+        <div class="card2">
+          <div class="card2-hdr">Call Outcomes Breakdown</div>
+          <div class="card2-body" id="outcomesBreakdown"></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="dash-page" id="dp-settings">
+        <div class="card2" style="max-width:500px;">
+          <div class="card2-hdr">Agency Settings</div>
+          <div class="card2-body" style="display:flex;flex-direction:column;gap:14px;">
+            <div class="field2"><label>Agency Name</label><input type="text" id="setAgencyName" /></div>
+            <div class="field2"><label>Admin Email</label><input type="email" id="setAdminEmail" /></div>
+            <div class="field2" id="brandSection" style="display:none;">
+              <label>White-Label Brand Name</label>
+              <input type="text" id="setBrandName" placeholder="Shown to agents on login" />
+            </div>
+            <div class="field2" id="brandLogoSection" style="display:none;">
+              <label>Brand Initial (shown in logo mark)</label>
+              <input type="text" id="setBrandInitial" maxlength="1" placeholder="E" style="width:60px;" />
+            </div>
+            <button class="btn2 btn2-primary" onclick="saveSettings()">Save Settings</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── ACCOUNTS ────────────────────────────────────────────────
+const ACCOUNTS = {
+  'myinsuranceplan2013@gmail.com': { pass:'Evertrust2024!', role:'admin', name:'Marcus — Evertrust Admin', agency:'Evertrust Legacy Protection Group', plan:'white-label', brand:'Evertrust Legacy Protection Group', seats:1, maxSeats:25 },
+  'admin@agency.com': { pass:'admin123', role:'admin', name:'Agency Admin', agency:'Coastal Life Insurance', plan:'white-label', brand:'Coastal Life', seats:8, maxSeats:10 },
+  'agent@agency.com': { pass:'agent123', role:'agent', name:'Ray Hopkins', agency:'Coastal Life Insurance', plan:'white-label', brand:'Coastal Life', seats:8, maxSeats:10 },
+};
+
+let currentUser = null;
+let teamMembers = [
+  { name:'Marcus', email:'myinsuranceplan2013@gmail.com', role:'Admin', active:true },
+];
+let callLog = JSON.parse(localStorage.getItem('elpCallLog')||'[]');
+let sessionCalls = 0;
+
+// ── AUTH ─────────────────────────────────────────────────────
+function agentLogin() {
+  const email = document.getElementById('agentEmail').value.trim().toLowerCase();
+  const pass = document.getElementById('agentPass').value;
+  const acct = ACCOUNTS[email];
+  if(acct && acct.pass===pass) {
+    currentUser = { email, ...acct };
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('dashWrap').style.display = 'flex';
+    initDash();
+  } else {
+    document.getElementById('agentErr').style.display = 'block';
+  }
+}
+document.getElementById('agentPass').addEventListener('keydown', e=>{ if(e.key==='Enter') agentLogin(); });
+document.getElementById('agentEmail').addEventListener('keydown', e=>{ if(e.key==='Enter') agentLogin(); });
+
+function agentLogout() {
+  currentUser = null;
+  document.getElementById('loginWrap').style.display = 'flex';
+  document.getElementById('dashWrap').style.display = 'none';
+  document.getElementById('agentEmail').value='';
+  document.getElementById('agentPass').value='';
+  document.getElementById('agentErr').style.display='none';
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+function initDash() {
+  const u = currentUser;
+  const isWL = u.plan==='white-label';
+  const brand = isWL ? u.brand : 'Evertrust';
+
+  document.getElementById('dashMark').textContent = brand.charAt(0);
+  document.getElementById('dashBrandName').textContent = brand;
+  document.getElementById('agentPill').textContent = u.name;
+  document.getElementById('stat-calls').textContent = sessionCalls;
+  document.getElementById('stat-leads').textContent = 0;
+
+  if(u.role==='admin') {
+    document.getElementById('adminSection').style.display='';
+    document.getElementById('teamNav').style.display='';
+    document.getElementById('analyticsNav').style.display='';
+    document.getElementById('settingsNav').style.display='';
+    renderTeam();
+    renderAnalytics();
+    document.getElementById('setAgencyName').value = u.agency;
+    document.getElementById('setAdminEmail').value = u.email;
+    if(isWL) {
+      document.getElementById('brandSection').style.display='';
+      document.getElementById('brandLogoSection').style.display='';
+      document.getElementById('setBrandName').value = u.brand||u.agency;
+      document.getElementById('setBrandInitial').value = brand.charAt(0);
+    }
+  }
+  renderCallLog();
+}
+
+function showDashPage(id, el) {
+  document.querySelectorAll('.dash-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ds-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('dp-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+}
+
+// ── DIALER ───────────────────────────────────────────────────
+function launchDialer() {
+  window.open('../dialer/index.html','_blank');
+}
+
+// ── TEAM ─────────────────────────────────────────────────────
+function renderTeam() {
+  if(!currentUser) return;
+  document.getElementById('seatsUsed').textContent = teamMembers.length;
+  document.getElementById('seatsAvail').textContent = currentUser.maxSeats - teamMembers.length;
+  document.getElementById('teamPlan').textContent = currentUser.plan==='white-label'?'White-Label':'Standard';
+  document.getElementById('seatGrid').innerHTML = teamMembers.map(m=>`
+    <div class="seat-card ${m.active?'active-seat':''}">
+      <div class="seat-name">${m.name}</div>
+      <div class="seat-email">${m.email}</div>
+      <div class="seat-status" style="color:${m.active?'var(--green)':'var(--muted)'};">${m.role} · ${m.active?'Active':'Inactive'}</div>
+    </div>
+  `).join('');
+}
+
+function showAddAgent() { document.getElementById('addAgentCard').style.display='block'; }
+
+function addAgent() {
+  const first = document.getElementById('newAgentFirst').value.trim();
+  const last = document.getElementById('newAgentLast').value.trim();
+  const email = document.getElementById('newAgentEmail').value.trim();
+  if(!first||!email) return;
+  if(teamMembers.length >= currentUser.maxSeats) { alert('No seats available. Contact Evertrust to add seats.'); return; }
+  teamMembers.push({ name:first+' '+last, email, role: document.getElementById('newAgentRole').value==='admin'?'Admin':'Agent', active:true });
+  document.getElementById('addAgentCard').style.display='none';
+  document.getElementById('newAgentFirst').value='';
+  document.getElementById('newAgentLast').value='';
+  document.getElementById('newAgentEmail').value='';
+  renderTeam();
+}
+
+// ── ANALYTICS ────────────────────────────────────────────────
+function renderAnalytics() {
+  const outcomes = { Sold:4, 'Follow-Up':8, Voicemail:12, 'Not Interested':6, DNC:2, Callback:5 };
+  const total = Object.values(outcomes).reduce((a,b)=>a+b,0);
+  const colors = { Sold:'badge-green', 'Follow-Up':'badge-blue', Voicemail:'badge-gray', 'Not Interested':'badge-gold', DNC:'badge-red', Callback:'badge-blue' };
+
+  document.getElementById('analyticsStats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Calls</div><div class="stat-val">${total}</div><div class="stat-sub">this week</div></div>
+    <div class="stat-card"><div class="stat-label">Sales</div><div class="stat-val">${outcomes.Sold}</div><div class="stat-sub">${Math.round(outcomes.Sold/total*100)}% conversion</div></div>
+    <div class="stat-card"><div class="stat-label">Callbacks Set</div><div class="stat-val">${outcomes.Callback}</div><div class="stat-sub">scheduled follow-ups</div></div>
+  `;
+
+  const max = Math.max(...Object.values(outcomes));
+  document.getElementById('outcomesBreakdown').innerHTML = Object.entries(outcomes).map(([k,v])=>`
+    <div class="outcome-row">
+      <span class="badge ${colors[k]||'badge-gray'}" style="min-width:110px;">${k}</span>
+      <div style="flex:1;height:8px;background:#F1F5F9;border-radius:4px;overflow:hidden;margin:0 12px;">
+        <div style="height:100%;border-radius:4px;background:var(--navy);opacity:0.7;width:${Math.round(v/max*100)}%;"></div>
+      </div>
+      <span style="font-size:13px;font-weight:700;min-width:28px;text-align:right;">${v}</span>
+      <span style="font-size:12px;color:var(--muted);min-width:36px;text-align:right;">${Math.round(v/total*100)}%</span>
+    </div>
+  `).join('');
+}
+
+// ── CALL LOG ─────────────────────────────────────────────────
+function renderCallLog() {
+  const tbody = document.getElementById('callLogTable');
+  if(!callLog.length){ tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--muted);">No calls logged yet — launch the dialer to get started</td></tr>`; return; }
+  const outcomeColors = { Sold:'badge-green', 'Follow-Up':'badge-blue', Voicemail:'badge-gray', 'Not Interested':'badge-gold', DNC:'badge-red', Callback:'badge-blue' };
+  tbody.innerHTML = callLog.slice(-20).reverse().map(c=>`<tr>
+    <td style="font-weight:600;">${c.name||'—'}</td>
+    <td style="font-size:12px;color:var(--muted);">${c.phone||'—'}</td>
+    <td><span class="badge ${outcomeColors[c.outcome]||'badge-gray'}">${c.outcome||'Called'}</span></td>
+    <td style="font-size:12px;color:var(--muted);">${c.time||'—'}</td>
+  </tr>`).join('');
+}
+
+// ── SETTINGS ─────────────────────────────────────────────────
+function saveSettings() {
+  const brand = document.getElementById('setBrandName').value.trim();
+  const initial = document.getElementById('setBrandInitial').value.trim();
+  if(brand) { document.getElementById('dashBrandName').textContent = brand; }
+  if(initial) { document.getElementById('dashMark').textContent = initial; }
+  alert('Settings saved!');
+}
+</script>
+</body>
+</html>
