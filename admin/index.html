@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evertrust Platform — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0F2340;
+  --navy-mid: #1A3A5C;
+  --navy-light: #234E7A;
+  --gold: #C8973A;
+  --gold-light: #E8B85A;
+  --gold-pale: #FDF3E0;
+  --teal: #1B7B6E;
+  --teal-light: #E8F7F5;
+  --red: #C0392B;
+  --red-light: #FDEDEC;
+  --green: #1E7A4E;
+  --green-light: #E9F7EF;
+  --bg: #F4F6F9;
+  --card: #ffffff;
+  --border: #E2E8F0;
+  --text: #1A2332;
+  --muted: #64748B;
+  --sidebar-w: 240px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+
+/* ── LOGIN SCREEN ── */
+#loginScreen {
+  position: fixed; inset: 0; background: var(--navy);
+  display: flex; align-items: center; justify-content: center; z-index: 9999;
+}
+.login-box {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px; padding: 48px; width: 380px; backdrop-filter: blur(10px);
+}
+.login-logo { text-align: center; margin-bottom: 32px; }
+.login-logo-mark {
+  width: 56px; height: 56px; background: var(--gold);
+  border-radius: 14px; display: inline-flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 600; color: var(--navy); margin-bottom: 12px;
+}
+.login-logo h1 { font-size: 18px; font-weight: 600; color: white; }
+.login-logo p { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; letter-spacing: 1px; text-transform: uppercase; }
+.login-field { margin-bottom: 14px; }
+.login-field label { display: block; font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 6px; font-weight: 500; }
+.login-field input {
+  width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px; padding: 10px 14px; font-size: 14px; color: white; font-family: inherit;
+}
+.login-field input:focus { outline: none; border-color: var(--gold); }
+.login-field input::placeholder { color: rgba(255,255,255,0.3); }
+.login-btn {
+  width: 100%; background: var(--gold); border: none; border-radius: 8px;
+  padding: 12px; font-size: 14px; font-weight: 600; color: var(--navy);
+  cursor: pointer; margin-top: 8px; font-family: inherit; transition: background 0.15s;
+}
+.login-btn:hover { background: var(--gold-light); }
+.login-err { color: #ff6b6b; font-size: 12px; margin-top: 8px; text-align: center; display: none; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w); background: var(--navy); color: white;
+  display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+}
+.sidebar-brand {
+  padding: 20px 18px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; gap: 10px;
+}
+.brand-mark {
+  width: 36px; height: 36px; background: var(--gold); border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; color: var(--navy); flex-shrink: 0;
+}
+.brand-text h2 { font-size: 13px; font-weight: 600; color: white; }
+.brand-text p { font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 1px; }
+.sidebar-nav { flex: 1; padding: 16px 10px; }
+.nav-section { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; padding: 0 8px; margin: 18px 0 6px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 9px 10px;
+  border-radius: 8px; cursor: pointer; transition: all 0.15s; font-size: 13px;
+  color: rgba(255,255,255,0.6); font-weight: 400; margin-bottom: 2px;
+}
+.nav-item:hover { background: rgba(255,255,255,0.07); color: white; }
+.nav-item.active { background: rgba(200,151,58,0.2); color: var(--gold); }
+.nav-item .nav-icon { font-size: 15px; width: 20px; text-align: center; }
+.nav-badge {
+  margin-left: auto; background: var(--red); color: white;
+  border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 700;
+}
+.sidebar-footer { padding: 14px 10px; border-top: 1px solid rgba(255,255,255,0.08); }
+.admin-pill {
+  display: flex; align-items: center; gap: 9px; padding: 8px 10px;
+  border-radius: 8px; background: rgba(255,255,255,0.06);
+}
+.admin-avatar {
+  width: 30px; height: 30px; border-radius: 50%; background: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--navy);
+}
+.admin-name { font-size: 12px; font-weight: 500; color: white; }
+.admin-role { font-size: 10px; color: rgba(255,255,255,0.4); }
+.logout-btn {
+  margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.4);
+  cursor: pointer; font-size: 14px; padding: 4px;
+}
+.logout-btn:hover { color: white; }
+
+/* ── MAIN ── */
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+.topbar {
+  background: var(--card); border-bottom: 1px solid var(--border);
+  padding: 14px 28px; display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+}
+.page-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.page-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+.btn { border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; font-family: inherit; transition: all 0.15s; }
+.btn-primary { background: var(--navy); color: white; }
+.btn-primary:hover { background: var(--navy-mid); }
+.btn-gold { background: var(--gold); color: var(--navy); }
+.btn-gold:hover { background: var(--gold-light); }
+.btn-outline { background: white; color: var(--text); border: 1px solid var(--border); }
+.btn-outline:hover { border-color: var(--navy); }
+.btn-danger { background: var(--red-light); color: var(--red); border: 1px solid #F5C6C2; }
+.btn-danger:hover { background: #FADBD8; }
+.btn-success { background: var(--green-light); color: var(--green); border: 1px solid #A9DFBF; }
+
+.content { padding: 28px; flex: 1; }
+
+/* ── METRIC CARDS ── */
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.metric {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; position: relative; overflow: hidden;
+}
+.metric-accent { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.metric-label { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+.metric-value { font-size: 28px; font-weight: 600; color: var(--text); line-height: 1; }
+.metric-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.metric-sub .up { color: var(--green); font-weight: 600; }
+.metric-sub .down { color: var(--red); font-weight: 600; }
+
+/* ── TABLES ── */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+.card-hdr { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.card-hdr h3 { font-size: 14px; font-weight: 600; }
+.card-hdr p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+table { width: 100%; border-collapse: collapse; }
+th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); padding: 10px 20px; text-align: left; border-bottom: 1px solid var(--border); background: #FAFBFC; }
+td { padding: 13px 20px; font-size: 13px; border-bottom: 1px solid #F4F6F8; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #F9FAFB; }
+
+/* ── BADGES ── */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.badge-active { background: var(--green-light); color: var(--green); }
+.badge-trial { background: var(--gold-pale); color: #8B6520; }
+.badge-suspended { background: var(--red-light); color: var(--red); }
+.badge-white { background: #EEF0FF; color: #3B3B9B; }
+.badge-standard { background: #F0F4FF; color: #2E5AAC; }
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* ── MODALS ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: white; border-radius: 16px; width: min(90vw, 540px); box-shadow: 0 20px 60px rgba(0,0,0,0.25); overflow: hidden; }
+.modal-hdr { background: var(--navy); color: white; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+.modal-hdr h3 { font-size: 15px; font-weight: 600; }
+.modal-close { background: rgba(255,255,255,0.15); border: none; color: white; width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+.modal-body { padding: 24px; }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.field input, .field select, .field textarea {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+  padding: 9px 12px; font-size: 13px; font-family: inherit; color: var(--text); background: white;
+}
+.field input:focus, .field select:focus { outline: none; border-color: var(--navy); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+
+/* ── TABS ── */
+.tab-bar { display: flex; gap: 4px; border-bottom: 1px solid var(--border); padding: 0 20px; margin-bottom: 0; }
+.tab-btn { padding: 10px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: none; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; font-family: inherit; }
+.tab-btn.active { color: var(--navy); border-bottom-color: var(--navy); font-weight: 600; }
+.tab-content { display: none; padding: 20px; }
+.tab-content.active { display: block; }
+
+/* ── AGENCY DETAIL ── */
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.detail-item label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); display: block; margin-bottom: 4px; }
+.detail-item span { font-size: 14px; font-weight: 500; color: var(--text); }
+
+/* ── ANALYTICS ── */
+.analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.mini-bar { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #F4F6F8; }
+.mini-bar:last-child { border-bottom: none; }
+.mini-bar-label { font-size: 13px; flex: 1; }
+.mini-bar-track { flex: 2; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.mini-bar-fill { height: 100%; border-radius: 3px; background: var(--navy); }
+.mini-bar-val { font-size: 12px; font-weight: 600; color: var(--muted); min-width: 36px; text-align: right; }
+
+/* ── SEARCH ── */
+.search-box {
+  display: flex; align-items: center; gap: 8px; background: var(--bg);
+  border: 1.5px solid var(--border); border-radius: 8px; padding: 7px 12px; width: 220px;
+}
+.search-box input { border: none; background: none; font-size: 13px; font-family: inherit; color: var(--text); flex: 1; }
+.search-box input:focus { outline: none; }
+.search-box span { color: var(--muted); font-size: 14px; }
+
+/* ── PLAN TOGGLE ── */
+.plan-select { display: flex; gap: 6px; flex-wrap: wrap; }
+.plan-chip {
+  padding: 5px 12px; border-radius: 20px; border: 1.5px solid var(--border);
+  font-size: 12px; font-weight: 600; cursor: pointer; background: white; color: var(--muted); font-family: inherit;
+}
+.plan-chip.sel-standard { border-color: #2E5AAC; background: #F0F4FF; color: #2E5AAC; }
+.plan-chip.sel-white { border-color: #3B3B9B; background: #EEF0FF; color: #3B3B9B; }
+
+/* ── EMPTY STATE ── */
+.empty { text-align: center; padding: 48px 20px; color: var(--muted); }
+.empty-icon { font-size: 36px; margin-bottom: 10px; }
+.empty h3 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.empty p { font-size: 13px; }
+
+/* ── PAGE SECTIONS ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── NOTIFICATION ── */
+.notif {
+  position: fixed; bottom: 24px; right: 24px; background: var(--navy);
+  color: white; border-radius: 10px; padding: 12px 18px; font-size: 13px; font-weight: 500;
+  display: none; z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.3); align-items: center; gap: 10px;
+}
+.notif.show { display: flex; }
+.notif.success { background: var(--green); }
+.notif.error { background: var(--red); }
+
+/* ── REVENUE CHART PLACEHOLDER ── */
+.chart-placeholder { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding: 10px 0; }
+.chart-bar { flex: 1; border-radius: 4px 4px 0 0; background: var(--navy); opacity: 0.15; transition: opacity 0.15s; }
+.chart-bar:hover { opacity: 0.4; }
+.chart-bar.highlight { opacity: 0.8; background: var(--gold); }
+
+/* ── SEAT PROGRESS ── */
+.seat-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-top: 4px; }
+.seat-fill { height: 100%; border-radius: 4px; background: var(--navy); transition: width 0.3s; }
+.seat-fill.warn { background: var(--gold); }
+.seat-fill.full { background: var(--red); }
+
+@media (max-width: 900px) {
+  .metrics { grid-template-columns: repeat(2,1fr); }
+  .analytics-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-mark">E</div>
+      <h1>Evertrust Platform</h1>
+      <p>Admin Portal</p>
+    </div>
+    <div class="login-field">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="your@email.com" />
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••" />
+    </div>
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="login-err" id="loginErr">Invalid credentials. Please check your email and password.</div>
+    <div style="text-align:center;margin-top:16px;font-size:11px;color:rgba(255,255,255,0.3);">Evertrust Legacy Protection Group — Admin Portal</div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar" style="display:none;">
+  <div class="sidebar-brand">
+    <div class="brand-mark">E</div>
+    <div class="brand-text">
+      <h2>Evertrust</h2>
+      <p>Platform Admin</p>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)">
+      <span class="nav-icon">⊞</span> Dashboard
+    </div>
+    <div class="nav-section">Accounts</div>
+    <div class="nav-item" onclick="showPage('agencies',this)">
+      <span class="nav-icon">🏢</span> Agencies
+      <span class="nav-badge" id="trialBadge">2</span>
+    </div>
+    <div class="nav-item" onclick="showPage('users',this)">
+      <span class="nav-icon">👥</span> Users
+    </div>
+    <div class="nav-section">Business</div>
+    <div class="nav-item" onclick="showPage('billing',this)">
+      <span class="nav-icon">💳</span> Billing
+    </div>
+    <div class="nav-item" onclick="showPage('analytics',this)">
+      <span class="nav-icon">📊</span> Analytics
+    </div>
+    <div class="nav-section">Platform</div>
+    <div class="nav-item" onclick="showPage('plans',this)">
+      <span class="nav-icon">📦</span> Plans & Pricing
+    </div>
+    <div class="nav-item" onclick="showPage('settings',this)">
+      <span class="nav-icon">⚙️</span> Settings
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="admin-pill">
+      <div class="admin-avatar">EL</div>
+      <div>
+        <div class="admin-name">Evertrust Admin</div>
+        <div class="admin-role">Super Admin</div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()" title="Sign out">↩</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="mainContent" style="display:none;">
+  <div class="topbar">
+    <div>
+      <div class="page-title" id="pageTitle">Dashboard</div>
+      <div class="page-sub" id="pageSub">Welcome back — here's your platform at a glance</div>
+    </div>
+    <div class="topbar-actions">
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" placeholder="Search agencies..." id="globalSearch" oninput="filterAgencies()" />
+      </div>
+      <button class="btn btn-gold" onclick="openModal('addAgencyModal')">+ Add Agency</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div class="page active" id="page-dashboard">
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-accent" style="background:var(--navy);"></div>
+          <div class="metric-label">Active Agencies</div>
+          <div class="metric-value" id="m-agencies">0</div>
+          <div class="metric-sub"><span class="up">↑ 2</span> this month</div>
+        </div>
+        <div class="metric">
+          <div class="metric-accent" style="background:var(--gold);"></div>
+          <div class="metric-label">Total Agents (seats)</div>
+          <div class="metric-value" id="m-seats">0</div>
+          <div class="metric-sub"><span class="up">↑ 7</span> this month</div>
+        </div>
+        <div class="metric">
+          <div class="metric-accent" style="background:var(--teal);"></div>
+          <div class="metric-label">MRR</div>
+          <div class="metric-value" id="m-mrr">$0</div>
+          <div class="metric-sub"><span class="up">↑ 12%</span> vs last month</div>
+        </div>
+        <div class="metric">
+          <div class="metric-accent" style="background:#7B2D8B;"></div>
+          <div class="metric-label">White-Label Accounts</div>
+          <div class="metric-value" id="m-wl">0</div>
+          <div class="metric-sub">of <span id="m-total">0</span> total agencies</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px;">
+        <div class="card">
+          <div class="card-hdr">
+            <div><h3>Recent Activity</h3><p>Latest agency sign-ups and changes</p></div>
+          </div>
+          <div style="padding:0;">
+            <table>
+              <thead><tr><th>Agency</th><th>Event</th><th>Plan</th><th>Date</th></tr></thead>
+              <tbody id="recentActivity"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div><h3>MRR by Month</h3><p>Last 6 months</p></div></div>
+          <div style="padding:16px 20px;">
+            <div class="chart-placeholder" id="revenueChart"></div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px;" id="chartLabels"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">
+          <div><h3>Trials Expiring Soon</h3><p>Agencies in trial that need follow-up</p></div>
+        </div>
+        <div style="padding:0;">
+          <table>
+            <thead><tr><th>Agency</th><th>Contact</th><th>Trial Ends</th><th>Seats</th><th>Action</th></tr></thead>
+            <tbody id="trialsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ AGENCIES ══ -->
+    <div class="page" id="page-agencies">
+      <div class="card">
+        <div class="card-hdr">
+          <div><h3>All Agencies</h3><p id="agencyCount">Loading...</p></div>
+          <div style="display:flex;gap:8px;">
+            <select class="btn btn-outline" id="filterStatus" onchange="filterAgencies()" style="font-family:inherit;font-size:13px;">
+              <option value="">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="trial">Trial</option>
+              <option value="suspended">Suspended</option>
+            </select>
+            <select class="btn btn-outline" id="filterPlan" onchange="filterAgencies()" style="font-family:inherit;font-size:13px;">
+              <option value="">All Plans</option>
+              <option value="standard">Standard</option>
+              <option value="white-label">White-Label</option>
+            </select>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Agency</th><th>Plan</th><th>Status</th><th>Seats</th><th>MRR</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody id="agencyTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ USERS ══ -->
+    <div class="page" id="page-users">
+      <div class="card">
+        <div class="card-hdr">
+          <div><h3>All Users</h3><p>Agents across all agencies</p></div>
+        </div>
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Agency</th><th>Role</th><th>Last Active</th><th>Status</th></tr></thead>
+          <tbody id="usersTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ BILLING ══ -->
+    <div class="page" id="page-billing">
+      <div class="metrics" style="grid-template-columns:repeat(3,1fr);">
+        <div class="metric">
+          <div class="metric-accent" style="background:var(--green);"></div>
+          <div class="metric-label">MRR</div>
+          <div class="metric-value" id="b-mrr">$0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-accent" style="background:var(--gold);"></div>
+          <div class="metric-label">ARR (projected)</div>
+          <div class="metric-value" id="b-arr">$0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-accent" style="background:var(--navy);"></div>
+          <div class="metric-label">Avg Revenue / Agency</div>
+          <div class="metric-value" id="b-avg">$0</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><h3>Billing Records</h3></div>
+        <table>
+          <thead><tr><th>Agency</th><th>Plan</th><th>Seats</th><th>Monthly</th><th>Status</th><th>Next Billing</th></tr></thead>
+          <tbody id="billingTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ ANALYTICS ══ -->
+    <div class="page" id="page-analytics">
+      <div class="analytics-grid">
+        <div class="card">
+          <div class="card-hdr"><h3>Top Agencies by Seats</h3></div>
+          <div style="padding:16px 20px;" id="topAgencies"></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Plan Distribution</h3></div>
+          <div style="padding:16px 20px;" id="planDistribution"></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Status Breakdown</h3></div>
+          <div style="padding:16px 20px;" id="statusBreakdown"></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Growth Summary</h3></div>
+          <div style="padding:16px 20px;" id="growthSummary"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PLANS ══ -->
+    <div class="page" id="page-plans">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="card">
+          <div class="card-hdr" style="background:#F0F4FF;">
+            <div><h3 style="color:#2E5AAC;">Standard Plan</h3><p>Core dialer access per seat</p></div>
+            <span class="badge badge-standard">Active</span>
+          </div>
+          <div style="padding:20px;">
+            <div style="font-size:32px;font-weight:700;color:var(--text);margin-bottom:4px;">$45<span style="font-size:14px;font-weight:400;color:var(--muted);">/seat/mo</span></div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Recommended for independent agencies</p>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+              <div>✅ Full dialer access</div>
+              <div>✅ Lead CSV import</div>
+              <div>✅ Call notes & outcomes</div>
+              <div>✅ Callback scheduler</div>
+              <div>✅ All call scripts</div>
+              <div>✅ UW Lookup tool</div>
+              <div>❌ White-label branding</div>
+              <div>❌ Agency admin panel</div>
+            </div>
+            <button class="btn btn-outline" style="margin-top:16px;width:100%;" onclick="editPlan('standard')">Edit Pricing</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr" style="background:#EEF0FF;">
+            <div><h3 style="color:#3B3B9B;">White-Label Plan</h3><p>Full rebrand + agency management</p></div>
+            <span class="badge badge-white">Active</span>
+          </div>
+          <div style="padding:20px;">
+            <div style="font-size:32px;font-weight:700;color:var(--text);margin-bottom:4px;">$65<span style="font-size:14px;font-weight:400;color:var(--muted);">/seat/mo</span></div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">For agencies wanting their own brand</p>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+              <div>✅ Everything in Standard</div>
+              <div>✅ Custom logo & agency name</div>
+              <div>✅ Custom color scheme</div>
+              <div>✅ Agency admin dashboard</div>
+              <div>✅ Team seat management</div>
+              <div>✅ Priority support</div>
+              <div>✅ Custom script editing</div>
+              <div>✅ Call analytics reports</div>
+            </div>
+            <button class="btn btn-outline" style="margin-top:16px;width:100%;" onclick="editPlan('white-label')">Edit Pricing</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS ══ -->
+    <div class="page" id="page-settings">
+      <div class="card" style="max-width:600px;">
+        <div class="card-hdr"><h3>Platform Settings</h3></div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
+          <div class="field"><label>Platform Name</label><input type="text" value="Evertrust Legacy Protection Group" /></div>
+          <div class="field"><label>Admin Email</label><input type="email" value="admin@evertrust.com" /></div>
+          <div class="field"><label>Support Email</label><input type="email" value="support@evertrust.com" /></div>
+          <div class="field"><label>Trial Period (days)</label><input type="number" value="14" /></div>
+          <div class="field">
+            <label>Payment Link (Gumroad / Stripe)</label>
+            <input type="url" placeholder="https://gumroad.com/l/your-product" />
+          </div>
+          <button class="btn btn-primary" onclick="showNotif('Settings saved','success')">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD AGENCY MODAL -->
+<div class="modal-overlay" id="addAgencyModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3>Add New Agency</h3>
+      <button class="modal-close" onclick="closeModal('addAgencyModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-row">
+        <div class="field"><label>Agency Name *</label><input type="text" id="newAgencyName" placeholder="ABC Insurance Agency" /></div>
+        <div class="field"><label>Contact Name *</label><input type="text" id="newContact" placeholder="John Smith" /></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Email *</label><input type="email" id="newEmail" placeholder="john@abcinsurance.com" /></div>
+        <div class="field"><label>Phone</label><input type="tel" id="newPhone" placeholder="(555) 000-0000" /></div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Plan</label>
+          <select id="newPlan">
+            <option value="standard">Standard — $45/seat/mo</option>
+            <option value="white-label">White-Label — $65/seat/mo</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Initial Seats</label>
+          <input type="number" id="newSeats" value="3" min="1" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Status</label>
+          <select id="newStatus">
+            <option value="trial">Trial (14 days)</option>
+            <option value="active">Active</option>
+          </select>
+        </div>
+        <div class="field"><label>State</label><input type="text" id="newState" placeholder="SC" maxlength="2" /></div>
+      </div>
+      <div class="field" id="wlBrandField" style="display:none;">
+        <label>White-Label Brand Name (if different)</label>
+        <input type="text" id="newBrand" placeholder="Leave blank to use agency name" />
+      </div>
+      <div style="margin-top:8px;padding-top:16px;border-top:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:12px;">🔐 Login Credentials</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Login Email (for agency portal)</label>
+            <input type="email" id="newLoginEmail" placeholder="Same as contact email" />
+            <div style="font-size:11px;color:var(--muted);margin-top:4px;">Leave blank to use contact email above</div>
+          </div>
+          <div class="field">
+            <label>Temporary Password *</label>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="newPassword" placeholder="e.g. Agency2024!" style="flex:1;" />
+              <button type="button" class="btn btn-outline" style="padding:8px 10px;font-size:12px;white-space:nowrap;" onclick="generatePassword()">Generate</button>
+            </div>
+          </div>
+        </div>
+        <div id="credentialsCopied" style="display:none;background:var(--green-light);border:1px solid #A9DFBF;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--green);margin-top:8px;">
+          ✓ Credentials copied to clipboard — paste into your onboarding email!
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('addAgencyModal')">Cancel</button>
+      <button class="btn btn-outline" onclick="copyCredentials()" style="gap:4px;">📋 Copy Credentials</button>
+      <button class="btn btn-gold" onclick="addAgency()">Create Agency</button>
+    </div>
+  </div>
+</div>
+
+<!-- AGENCY DETAIL MODAL -->
+<div class="modal-overlay" id="agencyDetailModal">
+  <div class="modal" style="width:min(90vw,640px);">
+    <div class="modal-hdr">
+      <h3 id="detailAgencyName">Agency Details</h3>
+      <button class="modal-close" onclick="closeModal('agencyDetailModal')">✕</button>
+    </div>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="showTab('detail',this)">Overview</button>
+      <button class="tab-btn" onclick="showTab('seats',this)">Seats</button>
+      <button class="tab-btn" onclick="showTab('billing-detail',this)">Billing</button>
+    </div>
+    <div class="tab-content active" id="tab-detail">
+      <div class="detail-grid" id="detailContent"></div>
+      <div style="display:flex;gap:8px;margin-top:20px;">
+        <button class="btn btn-success" id="detailActivateBtn" onclick="changeAgencyStatus('active')">✓ Activate</button>
+        <button class="btn btn-danger" onclick="changeAgencyStatus('suspended')">⊘ Suspend</button>
+        <button class="btn btn-outline" style="margin-left:auto;" onclick="sendAgencyEmail()">✉ Email Agency</button>
+      </div>
+    </div>
+    <div class="tab-content" id="tab-seats">
+      <div id="seatsContent"></div>
+      <div style="margin-top:16px;display:flex;gap:8px;">
+        <input type="number" id="addSeatsInput" placeholder="Add seats" min="1" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;width:120px;">
+        <button class="btn btn-primary" onclick="addSeats()">Add Seats</button>
+      </div>
+    </div>
+    <div class="tab-content" id="tab-billing-detail">
+      <div id="billingDetailContent"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('agencyDetailModal')">Close</button>
+      <button class="btn btn-primary" onclick="saveAgencyChanges()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif">
+  <span id="notifText"></span>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────
+const ADMIN = { email: 'myinsuranceplan2013@gmail.com', pass: 'Evertrust2024!' };
+
+let agencies = [
+  { id:1, name:'Coastal Life Insurance', contact:'Sandra Moyer', email:'smoyer@coastallife.com', phone:'(843) 555-0182', plan:'white-label', status:'active', seats:8, maxSeats:10, state:'SC', joined:'2025-10-14', brand:'Coastal Life Dialer', trialEnd:null },
+  { id:2, name:'Premier Benefits Group', contact:'Derek Washington', email:'derek@premierbenefits.com', phone:'(704) 555-0247', plan:'standard', status:'active', seats:5, maxSeats:5, state:'NC', joined:'2025-11-02', brand:null, trialEnd:null },
+  { id:3, name:'SunCoast Agency LLC', contact:'Maria Gutierrez', email:'maria@suncoastagency.com', phone:'(954) 555-0391', plan:'standard', status:'trial', seats:3, maxSeats:3, state:'FL', joined:'2026-03-19', brand:null, trialEnd:'2026-04-05' },
+  { id:4, name:'Heritage Insurance Partners', contact:'Tom Briggs', email:'tbriggs@heritagepartners.net', phone:'(615) 555-0118', plan:'white-label', status:'active', seats:12, maxSeats:15, state:'TN', joined:'2025-09-08', brand:'Heritage Agent Hub', trialEnd:null },
+  { id:5, name:'Blue Ridge Financial', contact:'Angela Foster', email:'afoster@blueridgefin.com', phone:'(828) 555-0229', plan:'standard', status:'trial', seats:2, maxSeats:2, state:'NC', joined:'2026-03-26', brand:null, trialEnd:'2026-04-09' },
+  { id:6, name:'Gulf States Protection', contact:'James Leblanc', email:'jleblanc@gulfstates.com', phone:'(504) 555-0344', plan:'standard', status:'suspended', seats:4, maxSeats:4, state:'LA', joined:'2025-12-01', brand:null, trialEnd:null },
+];
+
+let users = [
+  { name:'Sandra Moyer', email:'smoyer@coastallife.com', agency:'Coastal Life Insurance', role:'Admin', lastActive:'Today', status:'active' },
+  { name:'Ray Hopkins', email:'rhopkins@coastallife.com', agency:'Coastal Life Insurance', role:'Agent', lastActive:'Today', status:'active' },
+  { name:'Derek Washington', email:'derek@premierbenefits.com', agency:'Premier Benefits Group', role:'Admin', lastActive:'Yesterday', status:'active' },
+  { name:'Maria Gutierrez', email:'maria@suncoastagency.com', agency:'SunCoast Agency LLC', role:'Admin', lastActive:'2 days ago', status:'active' },
+  { name:'Tom Briggs', email:'tbriggs@heritagepartners.net', agency:'Heritage Insurance Partners', role:'Admin', lastActive:'Today', status:'active' },
+  { name:'Angela Foster', email:'afoster@blueridgefin.com', agency:'Blue Ridge Financial', role:'Admin', lastActive:'Today', status:'active' },
+  { name:'James Leblanc', email:'jleblanc@gulfstates.com', agency:'Gulf States Protection', role:'Admin', lastActive:'31 days ago', status:'suspended' },
+];
+
+const mrrHistory = [2340, 3120, 3780, 4050, 4680, 5580];
+const mrrMonths = ['Nov','Dec','Jan','Feb','Mar','Apr'];
+
+let currentAgencyId = null;
+
+// ── AUTH ──────────────────────────────────────────────────────
+function doLogin() {
+  const e = document.getElementById('loginEmail').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if (e === ADMIN.email && p === ADMIN.pass) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('sidebar').style.display = 'flex';
+    document.getElementById('mainContent').style.display = 'flex';
+    render();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+  }
+}
+document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+document.getElementById('loginEmail').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function doLogout() {
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginErr').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('sidebar').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'none';
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  const titles = { dashboard:'Dashboard', agencies:'Agencies', users:'Users', billing:'Billing', analytics:'Analytics', plans:'Plans & Pricing', settings:'Settings' };
+  const subs = { dashboard:"Welcome back — here's your platform at a glance", agencies:'Manage all agency accounts', users:'View all agents across agencies', billing:'Revenue and billing overview', analytics:'Usage and growth analytics', plans:'Configure your pricing tiers', settings:'Platform configuration' };
+  document.getElementById('pageTitle').textContent = titles[id]||id;
+  document.getElementById('pageSub').textContent = subs[id]||'';
+  if(id==='analytics') renderAnalytics();
+}
+
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── RENDER ────────────────────────────────────────────────────
+function render() {
+  renderMetrics();
+  renderAgencyTable();
+  renderUsersTable();
+  renderBilling();
+  renderActivity();
+  renderTrials();
+  renderChart();
+}
+
+function getMRR(a) {
+  const rate = a.plan==='white-label'?65:45;
+  return a.status==='suspended'?0:a.seats*rate;
+}
+
+function renderMetrics() {
+  const active = agencies.filter(a=>a.status==='active');
+  const totalSeats = agencies.reduce((s,a)=>s+(a.status!=='suspended'?a.seats:0),0);
+  const mrr = agencies.reduce((s,a)=>s+getMRR(a),0);
+  const wl = agencies.filter(a=>a.plan==='white-label'&&a.status!=='suspended').length;
+  document.getElementById('m-agencies').textContent = active.length;
+  document.getElementById('m-seats').textContent = totalSeats;
+  document.getElementById('m-mrr').textContent = '$'+mrr.toLocaleString();
+  document.getElementById('m-wl').textContent = wl;
+  document.getElementById('m-total').textContent = agencies.length;
+  document.getElementById('trialBadge').textContent = agencies.filter(a=>a.status==='trial').length;
+  document.getElementById('b-mrr').textContent = '$'+mrr.toLocaleString();
+  document.getElementById('b-arr').textContent = '$'+(mrr*12).toLocaleString();
+  const avg = active.length ? Math.round(mrr/active.length) : 0;
+  document.getElementById('b-avg').textContent = '$'+avg.toLocaleString();
+}
+
+function statusBadge(s) {
+  const map = { active:'badge-active', trial:'badge-trial', suspended:'badge-suspended' };
+  const label = s.charAt(0).toUpperCase()+s.slice(1);
+  return `<span class="badge ${map[s]||''}"><span class="badge-dot"></span>${label}</span>`;
+}
+
+function planBadge(p) {
+  return p==='white-label'
+    ? `<span class="badge badge-white">White-Label</span>`
+    : `<span class="badge badge-standard">Standard</span>`;
+}
+
+function renderAgencyTable(filter='') {
+  const statusF = document.getElementById('filterStatus')?.value||'';
+  const planF = document.getElementById('filterPlan')?.value||'';
+  const search = document.getElementById('globalSearch')?.value.toLowerCase()||'';
+  let list = agencies.filter(a=>{
+    if(statusF && a.status!==statusF) return false;
+    if(planF && a.plan!==planF) return false;
+    if(search && !a.name.toLowerCase().includes(search) && !a.contact.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  document.getElementById('agencyCount').textContent = `${list.length} of ${agencies.length} agencies`;
+  const tbody = document.getElementById('agencyTable');
+  if(!list.length){ tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);">No agencies found</td></tr>`; return; }
+  tbody.innerHTML = list.map(a=>{
+    const mrr = getMRR(a);
+    const pct = Math.round((a.seats/a.maxSeats)*100);
+    const fillCls = pct>=100?'full':pct>=80?'warn':'';
+    return `<tr>
+      <td><div style="font-weight:600;font-size:13px;">${a.name}</div><div style="font-size:11px;color:var(--muted);">${a.contact} · ${a.state}</div></td>
+      <td>${planBadge(a.plan)}</td>
+      <td>${statusBadge(a.status)}</td>
+      <td>
+        <div style="font-size:12px;font-weight:600;">${a.seats}/${a.maxSeats}</div>
+        <div class="seat-bar"><div class="seat-fill ${fillCls}" style="width:${pct}%"></div></div>
+      </td>
+      <td><span style="font-weight:600;">$${mrr.toLocaleString()}</span><span style="font-size:11px;color:var(--muted);">/mo</span></td>
+      <td style="font-size:12px;color:var(--muted);">${formatDate(a.joined)}</td>
+      <td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;" onclick="openAgencyDetail(${a.id})">View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterAgencies() { renderAgencyTable(); }
+
+function renderUsersTable() {
+  document.getElementById('usersTable').innerHTML = users.map(u=>`<tr>
+    <td><span style="font-weight:600;">${u.name}</span></td>
+    <td style="font-size:12px;color:var(--muted);">${u.email}</td>
+    <td style="font-size:12px;">${u.agency}</td>
+    <td style="font-size:12px;">${u.role}</td>
+    <td style="font-size:12px;color:var(--muted);">${u.lastActive}</td>
+    <td>${statusBadge(u.status)}</td>
+  </tr>`).join('');
+}
+
+function renderBilling() {
+  document.getElementById('billingTable').innerHTML = agencies.map(a=>{
+    const mrr = getMRR(a);
+    const next = a.status==='suspended'?'—':getNextBilling();
+    return `<tr>
+      <td><span style="font-weight:600;">${a.name}</span></td>
+      <td>${planBadge(a.plan)}</td>
+      <td>${a.seats}</td>
+      <td><span style="font-weight:600;">$${mrr.toLocaleString()}</span></td>
+      <td>${statusBadge(a.status)}</td>
+      <td style="font-size:12px;color:var(--muted);">${next}</td>
+    </tr>`;
+  }).join('');
+}
+
+function getNextBilling() {
+  const d = new Date(); d.setMonth(d.getMonth()+1);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+function renderActivity() {
+  const events = [
+    { agency:'Blue Ridge Financial', event:'New trial started', plan:'standard', date:'Mar 26' },
+    { agency:'SunCoast Agency LLC', event:'New trial started', plan:'standard', date:'Mar 19' },
+    { agency:'Heritage Insurance Partners', event:'Upgraded to 15 seats', plan:'white-label', date:'Mar 10' },
+    { agency:'Premier Benefits Group', event:'Renewed subscription', plan:'standard', date:'Mar 1' },
+  ];
+  document.getElementById('recentActivity').innerHTML = events.map(e=>`<tr>
+    <td><span style="font-weight:600;">${e.agency}</span></td>
+    <td style="font-size:12px;color:var(--muted);">${e.event}</td>
+    <td>${planBadge(e.plan)}</td>
+    <td style="font-size:12px;color:var(--muted);">${e.date}</td>
+  </tr>`).join('');
+}
+
+function renderTrials() {
+  const trials = agencies.filter(a=>a.status==='trial');
+  document.getElementById('trialsTable').innerHTML = trials.length
+    ? trials.map(a=>`<tr>
+        <td><span style="font-weight:600;">${a.name}</span></td>
+        <td style="font-size:12px;color:var(--muted);">${a.contact} · ${a.email}</td>
+        <td><span style="font-weight:600;color:var(--orange);">${a.trialEnd||'Apr 9'}</span></td>
+        <td>${a.seats} seats</td>
+        <td><button class="btn btn-success" style="padding:5px 10px;font-size:11px;" onclick="convertTrial(${a.id})">Convert to Paid</button></td>
+      </tr>`).join('')
+    : `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">No trials expiring soon</td></tr>`;
+}
+
+function renderChart() {
+  const max = Math.max(...mrrHistory);
+  document.getElementById('revenueChart').innerHTML = mrrHistory.map((v,i)=>`
+    <div class="chart-bar ${i===mrrHistory.length-1?'highlight':''}" style="height:${Math.round((v/max)*100)}%;flex:1;" title="$${v.toLocaleString()}"></div>
+  `).join('');
+  document.getElementById('chartLabels').innerHTML = mrrMonths.map(m=>`<span>${m}</span>`).join('');
+}
+
+function renderAnalytics() {
+  const sorted = [...agencies].sort((a,b)=>b.seats-a.seats);
+  const maxS = sorted[0]?.seats||1;
+  document.getElementById('topAgencies').innerHTML = sorted.map(a=>`<div class="mini-bar">
+    <div class="mini-bar-label" style="font-size:12px;">${a.name}</div>
+    <div class="mini-bar-track"><div class="mini-bar-fill" style="width:${Math.round((a.seats/maxS)*100)}%;background:var(--navy-light);"></div></div>
+    <div class="mini-bar-val">${a.seats}</div>
+  </div>`).join('');
+
+  const wl = agencies.filter(a=>a.plan==='white-label').length;
+  const std = agencies.length - wl;
+  document.getElementById('planDistribution').innerHTML = `
+    <div style="font-size:28px;font-weight:700;margin-bottom:4px;">${agencies.length} <span style="font-size:14px;font-weight:400;color:var(--muted);">total agencies</span></div>
+    <div class="mini-bar"><div class="mini-bar-label">Standard</div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${Math.round((std/agencies.length)*100)}%;background:#2E5AAC;"></div></div><div class="mini-bar-val">${std}</div></div>
+    <div class="mini-bar"><div class="mini-bar-label">White-Label</div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${Math.round((wl/agencies.length)*100)}%;background:#3B3B9B;"></div></div><div class="mini-bar-val">${wl}</div></div>
+  `;
+
+  const active = agencies.filter(a=>a.status==='active').length;
+  const trial = agencies.filter(a=>a.status==='trial').length;
+  const susp = agencies.filter(a=>a.status==='suspended').length;
+  document.getElementById('statusBreakdown').innerHTML = `
+    <div class="mini-bar"><div class="mini-bar-label">Active</div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${Math.round((active/agencies.length)*100)}%;background:var(--green);"></div></div><div class="mini-bar-val">${active}</div></div>
+    <div class="mini-bar"><div class="mini-bar-label">Trial</div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${Math.round((trial/agencies.length)*100)}%;background:var(--gold);"></div></div><div class="mini-bar-val">${trial}</div></div>
+    <div class="mini-bar"><div class="mini-bar-label">Suspended</div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${Math.round((susp/agencies.length)*100)}%;background:var(--red);"></div></div><div class="mini-bar-val">${susp}</div></div>
+  `;
+
+  const mrr = agencies.reduce((s,a)=>s+getMRR(a),0);
+  document.getElementById('growthSummary').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div><div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Current MRR</div><div style="font-size:24px;font-weight:700;">$${mrr.toLocaleString()}</div></div>
+      <div><div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Projected ARR</div><div style="font-size:24px;font-weight:700;">$${(mrr*12).toLocaleString()}</div></div>
+      <div><div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Total Seats Billed</div><div style="font-size:24px;font-weight:700;">${agencies.reduce((s,a)=>s+(a.status!=='suspended'?a.seats:0),0)}</div></div>
+    </div>
+  `;
+}
+
+// ── AGENCY DETAIL ─────────────────────────────────────────────
+function openAgencyDetail(id) {
+  currentAgencyId = id;
+  const a = agencies.find(x=>x.id===id);
+  if(!a) return;
+  document.getElementById('detailAgencyName').textContent = a.name;
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-item"><label>Agency Name</label><span>${a.name}</span></div>
+    <div class="detail-item"><label>Contact</label><span>${a.contact}</span></div>
+    <div class="detail-item"><label>Email</label><span>${a.email}</span></div>
+    <div class="detail-item"><label>Phone</label><span>${a.phone}</span></div>
+    <div class="detail-item"><label>Plan</label><span>${a.plan==='white-label'?'White-Label':'Standard'}</span></div>
+    <div class="detail-item"><label>Status</label><span>${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</span></div>
+    <div class="detail-item"><label>State</label><span>${a.state}</span></div>
+    <div class="detail-item"><label>Joined</label><span>${formatDate(a.joined)}</span></div>
+    ${a.plan==='white-label'?`<div class="detail-item"><label>Brand Name</label><span>${a.brand||a.name}</span></div>`:''}
+    ${a.status==='trial'?`<div class="detail-item"><label>Trial Ends</label><span style="color:var(--red);font-weight:600;">${a.trialEnd}</span></div>`:''}
+    <div class="detail-item"><label>MRR</label><span style="color:var(--green);font-weight:700;">$${getMRR(a).toLocaleString()}/mo</span></div>
+    ${a.loginEmail?`<div class="detail-item"><label>🔐 Login Email</label><span style="font-family:monospace;font-size:12px;">${a.loginEmail}</span></div>`:''}
+    ${a.password?`<div class="detail-item"><label>🔑 Password</label><span style="font-family:monospace;font-size:12px;background:var(--gold-pale);padding:2px 8px;border-radius:4px;">${a.password}</span></div>`:''}
+  `;
+  document.getElementById('seatsContent').innerHTML = `
+    <div style="margin-bottom:16px;">
+      <div style="font-size:13px;margin-bottom:6px;font-weight:600;">${a.seats} of ${a.maxSeats} seats in use</div>
+      <div class="seat-bar" style="height:12px;"><div class="seat-fill ${a.seats>=a.maxSeats?'full':a.seats/a.maxSeats>=0.8?'warn':''}" style="width:${Math.round((a.seats/a.maxSeats)*100)}%"></div></div>
+    </div>
+    <div style="font-size:13px;color:var(--muted);">Rate: <strong style="color:var(--text);">$${a.plan==='white-label'?65:45}/seat/month</strong></div>
+    <div style="font-size:13px;color:var(--muted);margin-top:4px;">Total billed: <strong style="color:var(--text);">$${getMRR(a).toLocaleString()}/month</strong></div>
+  `;
+  document.getElementById('billingDetailContent').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted);font-size:13px;">Plan</span><span style="font-weight:600;font-size:13px;">${a.plan==='white-label'?'White-Label':'Standard'}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted);font-size:13px;">Seats</span><span style="font-weight:600;font-size:13px;">${a.seats}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted);font-size:13px;">Rate per seat</span><span style="font-weight:600;font-size:13px;">$${a.plan==='white-label'?65:45}/mo</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted);font-size:13px;">Monthly total</span><span style="font-weight:700;font-size:16px;color:var(--green);">$${getMRR(a).toLocaleString()}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 0;"><span style="color:var(--muted);font-size:13px;">Next billing</span><span style="font-weight:600;font-size:13px;">${a.status==='suspended'?'Suspended':getNextBilling()}</span></div>
+    </div>
+  `;
+  document.getElementById('detailActivateBtn').style.display = a.status==='active'?'none':'';
+  openModal('agencyDetailModal');
+}
+
+function changeAgencyStatus(status) {
+  if(!currentAgencyId) return;
+  const a = agencies.find(x=>x.id===currentAgencyId);
+  if(a) { a.status = status; render(); closeModal('agencyDetailModal'); showNotif(`${a.name} ${status}`, 'success'); }
+}
+
+function convertTrial(id) {
+  const a = agencies.find(x=>x.id===id);
+  if(a){ a.status='active'; a.trialEnd=null; render(); showNotif(`${a.name} converted to paid`, 'success'); }
+}
+
+function addSeats() {
+  const n = parseInt(document.getElementById('addSeatsInput').value)||0;
+  if(!n||!currentAgencyId) return;
+  const a = agencies.find(x=>x.id===currentAgencyId);
+  if(a){ a.seats+=n; a.maxSeats=Math.max(a.maxSeats, a.seats); render(); openAgencyDetail(currentAgencyId); showNotif(`Added ${n} seats to ${a.name}`,'success'); }
+}
+
+function saveAgencyChanges() { closeModal('agencyDetailModal'); showNotif('Changes saved','success'); }
+function sendAgencyEmail() { closeModal('agencyDetailModal'); showNotif('Email drafted — connect your email provider in Settings',''); }
+
+// ── ADD AGENCY ────────────────────────────────────────────────
+document.getElementById('newPlan').addEventListener('change', function() {
+  document.getElementById('wlBrandField').style.display = this.value==='white-label'?'block':'none';
+});
+
+function generatePassword() {
+  const words = ['Trust','Shield','Legacy','Secure','Elite','Prime','Guard','Apex'];
+  const nums = Math.floor(100+Math.random()*900);
+  const syms = ['!','@','#','$','%'][Math.floor(Math.random()*5)];
+  const w = words[Math.floor(Math.random()*words.length)];
+  document.getElementById('newPassword').value = w + nums + syms;
+}
+
+function copyCredentials() {
+  const name = document.getElementById('newAgencyName').value.trim() || 'Agency';
+  const loginEmail = document.getElementById('newLoginEmail').value.trim() || document.getElementById('newEmail').value.trim();
+  const pass = document.getElementById('newPassword').value.trim();
+  if(!loginEmail || !pass){ showNotif('Enter email and password first','error'); return; }
+  const text = `Your Evertrust Portal Access\n\nPortal URL: https://your-site.netlify.app/agency/\nEmail: ${loginEmail}\nPassword: ${pass}\n\nPlease change your password after first login.`;
+  navigator.clipboard.writeText(text).then(()=>{
+    document.getElementById('credentialsCopied').style.display='block';
+    setTimeout(()=>document.getElementById('credentialsCopied').style.display='none', 4000);
+  }).catch(()=>{ showNotif('Copy failed — please copy manually','error'); });
+}
+
+function addAgency() {
+  const name = document.getElementById('newAgencyName').value.trim();
+  const contact = document.getElementById('newContact').value.trim();
+  const email = document.getElementById('newEmail').value.trim();
+  if(!name||!contact||!email){ showNotif('Please fill required fields','error'); return; }
+  if(!document.getElementById('newPassword').value.trim()){ showNotif('Please set a temporary password','error'); return; }
+  const plan = document.getElementById('newPlan').value;
+  const seats = parseInt(document.getElementById('newSeats').value)||3;
+  const status = document.getElementById('newStatus').value;
+  const state = document.getElementById('newState').value.toUpperCase()||'--';
+  const brand = document.getElementById('newBrand').value.trim()||null;
+  const loginEmail = document.getElementById('newLoginEmail').value.trim() || email;
+  const password = document.getElementById('newPassword').value.trim();
+  const trialEnd = status==='trial' ? new Date(Date.now()+14*86400000).toISOString().split('T')[0] : null;
+  agencies.unshift({ id: Date.now(), name, contact, email, phone: document.getElementById('newPhone').value, plan, status, seats, maxSeats:seats, state, joined: new Date().toISOString().split('T')[0], brand, trialEnd, loginEmail, password });
+  closeModal('addAgencyModal');
+  render();
+  showNotif(`${name} added successfully`, 'success');
+  document.getElementById('newAgencyName').value='';
+  document.getElementById('newContact').value='';
+  document.getElementById('newEmail').value='';
+  document.getElementById('newPhone').value='';
+  document.getElementById('newSeats').value='3';
+  document.getElementById('newBrand').value='';
+  document.getElementById('newLoginEmail').value='';
+  document.getElementById('newPassword').value='';
+}
+
+// ── PLANS ─────────────────────────────────────────────────────
+function editPlan(plan) { showNotif(`To edit ${plan} pricing, update the rate in Settings (coming soon)`, ''); }
+
+// ── MODALS ────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('open'); });
+});
+
+// ── UTILS ─────────────────────────────────────────────────────
+function formatDate(d) { return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function showNotif(msg, type='') {
+  const n = document.getElementById('notif');
+  document.getElementById('notifText').textContent = msg;
+  n.className = 'notif show' + (type?' '+type:'');
+  setTimeout(()=>n.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
